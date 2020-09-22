@@ -43,9 +43,9 @@ public class BoyerMoore {
 		 * */
 		int i = 0;
 		int j;
-    	int patternsFound = 0;
     	int m = pattern.length;
     	int n = text.length;
+        boolean noPattern = true;
 
 		if (m == 0) {
 			/*
@@ -84,7 +84,7 @@ public class BoyerMoore {
         		* */
         		if (j < 0) {
         			System.out.println("Found at position " + i);
-        			patternsFound++;
+                    if (noPattern) noPattern = false;
         			
         			/*
         			 * Ensure that shift stay within boundary of text. Shift pattern by 1 if out of bound will occur.
@@ -106,8 +106,8 @@ public class BoyerMoore {
         		}
         	} // end of while loop
 		}
-		
-        System.out.println("Patterns found: " + patternsFound);
+
+	    if (noPattern) System.out.println("No occurrence found.");
         System.out.println("====End of Program====");
 	} // end of Main method
 	

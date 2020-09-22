@@ -14,7 +14,6 @@ public class BruteForceMain {
 		String text = "";
 		String pattern = "";
 		//TCAGTGGAGGAAGCG(this has only 1) or AAAATAAAT (this has multiple occurances)
-		int patternsFound = 0;
 		
 		//read in file
         try {
@@ -48,12 +47,12 @@ public class BruteForceMain {
 	    	if(seqsFound.size() > 0) {
 	    		for (int i : seqsFound) {
 	    			System.out.println("Found at Index: "+ i);
-	    			patternsFound++;
 	    		}
+	    	} else {
+	    		System.out.println("No occurrence found.");
 	    	}
 		}
 
-	    System.out.println("Patterns found: " + patternsFound);
 	    System.out.println("====End of Program====");
 	}
 

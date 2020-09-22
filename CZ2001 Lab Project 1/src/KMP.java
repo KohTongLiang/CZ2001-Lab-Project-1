@@ -46,7 +46,7 @@ public class KMP {
        int lps[] = new int[m]; 
        int j = 0; // pattern index
        int i = 0; // text index
-       int patternsFound = 0;
+       boolean noPattern = true;
        
        if (m == 0) {
     	   System.out.println("Please enter a valid pattern.");
@@ -74,9 +74,9 @@ public class KMP {
                 * Process mismatch
                 * If index j is same as length of pattern, means that a pattern is found in the text.
                 * */
-               if (j == m) { 
+               if (j == m) {
                    System.out.println("Found pattern at index " + (i - j));
-                   patternsFound++;
+                   if (noPattern) noPattern = false;
                    j = lps[j - 1]; 
                } else if (i < n && pattern[j] != text[i]) {  
             	   /*
@@ -93,9 +93,8 @@ public class KMP {
                }
             } // end of comparison loops
        }
-       
-       
-       System.out.println("Patterns found: " + patternsFound);
+
+       if (noPattern) System.out.println("No occurrence found.");
        System.out.println("====End of Program====");
 	} // end of main method
 	
@@ -112,7 +111,7 @@ public class KMP {
 		 * */
         int leftIndex = 0; 
         int rightIndex = 1;
-        lps[0] = 0; 
+        lps[0] = 0;
    
         /*
          * Loop until the end of pattern
