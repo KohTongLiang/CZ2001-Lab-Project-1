@@ -6,14 +6,12 @@ import java.util.Scanner;
 public class KMP {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	    System.out.println("====Start of Program====");
         /*
 		* Initialize text and pattern variables.
         * */
 		String textStr = "";
 		String patternStr = "";
-
-		
 		// example search: AGCATATCTCAGCG
 		 
 		/*
@@ -36,76 +34,106 @@ public class KMP {
        /*
         * Convert text and pattern String to character array for future comparisons.
         * */
-		char[] text = textStr.toCharArray();
-		char[] pattern = patternStr.toCharArray();
+	   char[] text = textStr.toCharArray();
+	   char[] pattern = patternStr.toCharArray();
 		
-		int M = pattern.length; 
-        int N = text.length; 
-  
-        // create lps[] that will hold the longest 
-        // prefix suffix values for pattern 
-        int lps[] = new int[M]; 
-        int j = 0; // index for pat[] 
-  
-        // Preprocess the pattern (calculate lps[] 
-        // array) 
-        computeLPSArray(pattern, M, lps); 
-  
-        int i = 0; // index for txt[] 
-        while (i < N) { 
-            if (pattern[j] == text[i]) { 
-                j++; 
-                i++; 
-            } 
-            if (j == M) { 
-                System.out.println("Found pattern "
-                                   + "at index " + (i - j)); 
-                j = lps[j - 1]; 
-            } 
-  
-            // mismatch after j matches 
-            else if (i < N && pattern[j] != text[i]) { 
-                // Do not match lps[0..lps[j-1]] characters, 
-                // they will match anyway 
-                if (j != 0) 
-                    j = lps[j - 1]; 
-                else
-                    i = i + 1; 
-            } 
-        }
+	   /*
+	    * Initialize variables to be used during the comparisons
+	    * lps[] will be the pre-processed array used to determine which index in pattern to start comparing from during a mismatch
+	    * */
+	   int m = pattern.length; 
+       int n = text.length; 
+       int lps[] = new int[m]; 
+       int j = 0; // pattern index
+       int i = 0; // text index
+       int patternsFound = 0;
+       
+       if (m == 0) {
+    	   System.out.println("Please enter a valid pattern.");
+       } else {
+    	   /*
+            * Call pre-processing method
+            * */
+           lps = preProcessing(pattern, m, lps);
+           
+           /*
+            * loop until last possible position of pattern in the text
+            * */
+           while (i < n) {
+        	   
+        	   /*
+        	    * Increment index of both pattern and text until a mismatch occurs
+        	    * */
+               if (pattern[j] == text[i]) { 
+                   j++;
+                   i++;
+               }
+               
+               
+               /*
+                * Process mismatch
+                * If index j is same as length of pattern, means that a pattern is found in the text.
+                * */
+               if (j == m) { 
+                   System.out.println("Found pattern at index " + (i - j));
+                   patternsFound++;
+                   j = lps[j - 1]; 
+               } else if (i < n && pattern[j] != text[i]) {  
+            	   /*
+            	    * Event where there is a mismatch,
+            	    * If index j is not 0, we do not shift i but instead use the pre-processed array to determine which index
+            	    * in the pattern do we start at for the next set of comparisons
+            	    * If index j is 0, simply shift index i by 1 to start new comparisons
+            	    * */
+            	   if (j != 0) {
+            		   j = lps[j-1];
+            	   } else {
+            		   i = i + 1;
+            	   }
+               }
+            } // end of comparison loops
+       }
+       
+       
+       System.out.println("Patterns found: " + patternsFound);
+       System.out.println("====End of Program====");
 	} // end of main method
 	
-	static void computeLPSArray(char[] pat, int M, int lps[]) 
-    { 
-        // length of the previous longest prefix suffix 
-        int len = 0; 
-        int i = 1; 
-        lps[0] = 0; // lps[0] is always 0 
-  
-        // the loop calculates lps[i] for i = 1 to M-1 
-        while (i < M) { 
-            if (pat[i] == pat[len]) { 
-                len++; 
-                lps[i] = len; 
-                i++; 
-            } 
-            else // (pat[i] != pat[len]) 
-            { 
-                // This is tricky. Consider the example. 
-                // AAACAAAA and i = 7. The idea is similar 
-                // to search step. 
-                if (len != 0) { 
-                    len = lps[len - 1]; 
-  
-                    // Also, note that we do not increment 
-                    // i here 
-                } 
-                else // if (len == 0) 
-                { 
-                    lps[i] = len; 
-                    i++; 
-                } 
-            } 
-        } 
-    } // end of computeLPSArray
+	/*
+	 * Pre-processing method
+	 * prepare an array of int which will be used to indicate which index in pattern to start comparison from to skip
+	 * having to start from first character
+	 * */
+	static int[] preProcessing(char[] pattern, int m, int lps[]) {
+		/*
+		 * Initialize some variables for later comparisons
+		 * lps[0] wll always start with 0 because no comparison done yet
+		 * the leftIndex and rightIndex variables will be used to visualized the pre-processing concept
+		 * */
+        int leftIndex = 0; 
+        int rightIndex = 1;
+        lps[0] = 0; 
+   
+        /*
+         * Loop until the end of pattern
+         * */
+        while (rightIndex < m) {
+        	/*
+        	 * when both characters are the same, they are both shifted and value at rightCharacter
+        	 * */
+            if (pattern[rightIndex] == pattern[leftIndex]) { 
+            	leftIndex++; 
+                lps[rightIndex] = leftIndex; 
+                rightIndex++; 
+            } else {
+                if (leftIndex != 0) { 
+                	leftIndex = lps[leftIndex - 1]; 
+                } else { 
+                    lps[rightIndex] = leftIndex; 
+                    rightIndex++; 
+                }
+            }
+        } // end of comparison loop
+        return lps;
+    } // end of preProcessing method
 }
